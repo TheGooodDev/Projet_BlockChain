@@ -1,4 +1,7 @@
 # DiplomePlatform - Blockchain Project
+### Félicien COURDESSE
+### Tanguy MEIGNIER
+### Noah RAZZAQ
 
 ## 🎓 Description
 
