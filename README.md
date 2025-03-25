@@ -12,6 +12,10 @@ Le projet utilise :
 - **ERC-721 (DiplomeNFT)** : pour émettre des diplômes sous forme de NFT.
 - **DiplomePlatform** : contrat principal pour gérer les inscriptions, évaluations et vérifications.
 
+### Vérification par Mythril
+
+![alt text](image.png)
+
 ---
 
 ## 🚀 Fonctionnalités
