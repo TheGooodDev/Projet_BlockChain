@@ -777,10 +777,11 @@
 			]
 		},
 		"contracts/DiplomeToken.sol": {
-			"keccak256": "0xe1f7afcc96d843d852da0f30e5e8529888951cb34f4576e9005461dfd1614831",
+			"keccak256": "0x78cfad91a4d63f83b509bfd3f3ee391f72a91fd89160d22bbd48968c9a9eca54",
+			"license": "MIT",
 			"urls": [
-				"bzz-raw://c5bd3555886c2984ab4579eafa35145f77d5fa2c16b5b81286d267a62270ed61",
-				"dweb:/ipfs/QmNtXgyjiN8qbxhfNzu7oH8oSckvL7pkAdz7ScbQ3BnqjG"
+				"bzz-raw://3bb7b3415e5bba775d9f3fbae50e687f9c34bce9f41f88801311a3ff7d8abce6",
+				"dweb:/ipfs/QmWBUUo2V7QiQdXQ4gHBFxVpE9HLesrSj49wp46AGPTJPZ"
 			]
 		}
 	},

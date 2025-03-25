@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -28,15 +29,15 @@ contract DiplomeNFT is ERC721URIStorage, AccessControl {
      * @param recipient : l'adresse qui recevra le NFT (peut être l'adresse de l'étudiant)
      * @param tokenURI_ : URI (IPFS par exemple) contenant les métadonnées
      */
-    function mintDiploma(address recipient, string memory tokenURI_)
+    function mintDiplome(address recipient, string memory tokenURI_)
         external
         onlyRole(MINTER_ROLE)
     {
         _tokenIdCounter++;
-        uint256 newDiplomaId = _tokenIdCounter;
+        uint256 newDiplomeId = _tokenIdCounter;
 
-        _safeMint(recipient, newDiplomaId);
-        _setTokenURI(newDiplomaId, tokenURI_);
+        _safeMint(recipient, newDiplomeId);
+        _setTokenURI(newDiplomeId, tokenURI_);
     }
 
     /**

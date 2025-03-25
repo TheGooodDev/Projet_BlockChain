@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "./DiplomeData.sol";
 import "./DiplomeToken.sol";
 import "./DiplomeNFT.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -13,171 +14,69 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 contract DiplomePlatform is Ownable {
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    // Référence vers le contrat ERC20
+    // -------------------------------------------------------------------
+    // Référence vers le contrat ERC20 & NFT
+    // -------------------------------------------------------------------
     DiplomeToken public diplomeToken;
+    DiplomeNFT   public diplomeNFT;
 
-    // Référence vers le contrat NFT
-    DiplomeNFT public diplomeNFT;
-
+    // -------------------------------------------------------------------
     // Frais en tokens
+    // -------------------------------------------------------------------
     uint256 public constant EVALUATION_REWARD = 15 * 10**18; // 15 tokens
     uint256 public constant VERIFICATION_FEES = 10 * 10**18; // 10 tokens
 
-    // -----------------------------------------------------
-    // 1) Définition des structures de données
-    // -----------------------------------------------------
+    // -------------------------------------------------------------------
+    // 1) Mappings et stockage
+    //    On utilise la bibliothèque DiplomeData pour les types
+    // -------------------------------------------------------------------
 
-    // Type d'acteur pour distinguer une adresse
-    enum ActorType { None, Establishment, Company, Student }
-
-    /**
-     * @dev Informations sur l'établissement d'enseignement supérieur
-     * ID_ELS
-     * Nom_Etablissement
-     * Type
-     * Pays
-     * Adresse
-     * Site_Web
-     * ID_Agent
-     */
-    struct Establishment {
-        uint256 idEls;
-        string nomEtablissement;
-        string typeEtablissement;  // Université, école, institut, etc.
-        string pays;
-        string adressePhysique;
-        string siteWeb;
-        uint256 idAgent;
-        bool active;
-    }
-
-    /**
-     * @dev Informations sur l'entreprise
-     * ID_Entreprise
-     * Nom
-     * Secteur
-     * Date_Creation
-     * Classification_Taille
-     * Pays
-     * Adresse
-     * Courriel
-     * Téléphone
-     * Site Web
-     */
-    struct Company {
-        uint256 idEntreprise;
-        string nom;
-        string secteur;
-        string dateCreation;
-        string classificationTaille;
-        string pays;
-        string adressePhysique;
-        string courriel;
-        string telephone;
-        string siteWeb;
-        bool active;
-    }
-
-    /**
-     * @dev Informations sur l'étudiant
-     * ID_Etudiant
-     * Nom
-     * Prénom
-     * Date de naissance
-     * Sexe
-     * Nationalité
-     * Statut civil
-     * Adresse
-     * Courriel
-     * Téléphone
-     * Section
-     * Sujet_PFE
-     * Entreprise_Stage_PFE
-     * NomEtPrenom_MaitreDuStage
-     * Date_début_stage
-     * Date_fin_stage
-     * Evaluation
-     */
-    struct Student {
-        uint256 idEtudiant;
-        string nom;
-        string prenom;
-        string dateNaissance;
-        string sexe;
-        string nationalite;
-        string statutCivil;
-        string adressePhysique;
-        string courriel;
-        string telephone;
-        string section;
-        string sujetPFE;
-        string entrepriseStagePFE;
-        string nomEtPrenomMaitreDuStage;
-        string dateDebutStage;
-        string dateFinStage;
-        uint256 evaluation; // Note (0-100) ou tout autre système
-        bool active;
-    }
-
-    /**
-     * @dev Informations sur le diplôme
-     * ID_Diplome
-     * ID_Titulaire
-     * Nom_Etablissement
-     * ID_EES
-     * Pays
-     * Type_Diplôme
-     * Spécialité
-     * Mention
-     * Date d'obtention
-     */
-    struct Diploma {
-        uint256 idDiplome;       // PK
-        uint256 idTitulaire;     // ID_Etudiant
-        string nomEtablissement; // Nom complet de l'établissement
-        uint256 idEES;          // Lien vers l'établissement
-        string pays;
-        string typeDiplome; 
-        string specialite;
-        string mention;
-        string dateObtention;
-        bool exists; // Pour vérifier l'existence
-    }
-
-    // -----------------------------------------------------
-    // 2) Stockage on-chain via mapping
-    // -----------------------------------------------------
-
-    // Chaque adresse peut représenter un établissement, une entreprise, ou un étudiant
-    mapping(address => ActorType) public actorTypes;
+    // Type d'acteur pour distinguer l'adresse => enum ActorType
+    mapping(address => DiplomeData.ActorType) public actorTypes;
 
     // Établissements : mapping adresse -> Establishment
-    mapping(address => Establishment) public establishments;
+    mapping(address => DiplomeData.Establishment) public establishments;
 
     // Entreprises : mapping adresse -> Company
-    mapping(address => Company) public companies;
+    mapping(address => DiplomeData.Company) public companies;
 
     // Étudiants : mapping adresse -> Student
-    mapping(address => Student) public students;
+    mapping(address => DiplomeData.Student) public students;
 
-    // Diplômes : mapping diplomId -> Diploma
-    mapping(uint256 => Diploma) public diplomas;
-    uint256 public nextDiplomaId = 1; // Auto-increment
+    // Diplômes : mapping diplomaId -> Diplome
+    mapping(uint256 => DiplomeData.Diplome) public diplomas;
+
+    // Compteur pour générer un ID de diplôme unique
+    uint256 public nextDiplomeId = 1; 
 
     // Pour traquer les adresses autorisées à minter (établissements validés)
     EnumerableSet.AddressSet private establishmentSet;
 
-    // -----------------------------------------------------
-    // 3) Évents
-    // -----------------------------------------------------
-    event EstablishmentRegistered(address indexed establishment, uint256 indexed idEts, string nom);
-    event CompanyRegistered(address indexed company, uint256 indexed idCompany, string nom);
-    event StudentRegistered(address indexed studentAddress, uint256 indexed idStudent, string nom);
+    // -------------------------------------------------------------------
+    // 2) Events (optionnel, on peut aussi les mettre dans DiplomeData si on veut)
+    // -------------------------------------------------------------------
+    event EstablishmentRegistered(
+        address indexed establishment, 
+        uint256 indexed idEts, 
+        string nom
+    );
 
-    event DiplomaMinted(
+    event CompanyRegistered(
+        address indexed company, 
+        uint256 indexed idCompany, 
+        string nom
+    );
+
+    event StudentRegistered(
+        address indexed studentAddress, 
+        uint256 indexed idStudent, 
+        string nom
+    );
+
+    event DiplomeMinted(
         address indexed establishment, 
         address indexed studentWallet, 
-        uint256 diplomaId
+        uint256 diplomeId
     );
 
     event StudentEvaluated(
@@ -186,23 +85,23 @@ contract DiplomePlatform is Ownable {
         uint256 reward
     );
 
-    event DiplomaVerified(
+    event DiplomeVerified(
         address indexed company, 
-        address indexed ownerOfDiploma, 
+        address indexed ownerOfDiplome, 
         uint256 feesPaid
     );
 
-    // -----------------------------------------------------
-    // 4) Constructeur
-    // -----------------------------------------------------
+    // -------------------------------------------------------------------
+    // 3) Constructeur
+    // -------------------------------------------------------------------
     constructor(address _tokenAddress, address _nftAddress) Ownable(msg.sender) {
         diplomeToken = DiplomeToken(_tokenAddress);
-        diplomeNFT = DiplomeNFT(_nftAddress);
+        diplomeNFT   = DiplomeNFT(_nftAddress);
     }
 
-    // -----------------------------------------------------
-    // 5) Fonctions d'enregistrement
-    // -----------------------------------------------------
+    // -------------------------------------------------------------------
+    // 4) Fonctions d'enregistrement
+    // -------------------------------------------------------------------
 
     /**
      * @dev Enregistre un établissement d'enseignement
@@ -218,9 +117,13 @@ contract DiplomePlatform is Ownable {
     ) 
         external 
     {
-        require(actorTypes[msg.sender] == ActorType.None, "Already registered");
+        require(
+            actorTypes[msg.sender] == DiplomeData.ActorType.None, 
+            "Already registered"
+        );
         
-        establishments[msg.sender] = Establishment({
+        // Remplit la structure
+        establishments[msg.sender] = DiplomeData.Establishment({
             idEls: _idEts,
             nomEtablissement: _nom,
             typeEtablissement: _typeEts,
@@ -231,7 +134,7 @@ contract DiplomePlatform is Ownable {
             active: true
         });
 
-        actorTypes[msg.sender] = ActorType.Establishment;
+        actorTypes[msg.sender] = DiplomeData.ActorType.Establishment;
         establishmentSet.add(msg.sender);
 
         // On donne le minter role dans le contrat NFT
@@ -257,9 +160,12 @@ contract DiplomePlatform is Ownable {
     ) 
         external 
     {
-        require(actorTypes[msg.sender] == ActorType.None, "Already registered");
+        require(
+            actorTypes[msg.sender] == DiplomeData.ActorType.None, 
+            "Already registered"
+        );
 
-        companies[msg.sender] = Company({
+        companies[msg.sender] = DiplomeData.Company({
             idEntreprise: _idEntreprise,
             nom: _nom,
             secteur: _secteur,
@@ -273,13 +179,13 @@ contract DiplomePlatform is Ownable {
             active: true
         });
 
-        actorTypes[msg.sender] = ActorType.Company;
+        actorTypes[msg.sender] = DiplomeData.ActorType.Company;
 
         emit CompanyRegistered(msg.sender, _idEntreprise, _nom);
     }
 
     /**
-     * @dev Enregistre un étudiant (on peut l'associer à un wallet)
+     * @dev Enregistre un étudiant
      */
     function registerStudent(
         uint256 _idEtudiant,
@@ -301,9 +207,12 @@ contract DiplomePlatform is Ownable {
     )
         external
     {
-        require(actorTypes[msg.sender] == ActorType.None, "Already registered");
+        require(
+            actorTypes[msg.sender] == DiplomeData.ActorType.None, 
+            "Already registered"
+        );
 
-        students[msg.sender] = Student({
+        students[msg.sender] = DiplomeData.Student({
             idEtudiant: _idEtudiant,
             nom: _nom,
             prenom: _prenom,
@@ -320,34 +229,24 @@ contract DiplomePlatform is Ownable {
             nomEtPrenomMaitreDuStage: _nomEtPrenomMaitreDuStage,
             dateDebutStage: _dateDebutStage,
             dateFinStage: _dateFinStage,
-            evaluation: 0, // pas encore évalué
+            evaluation: 0, 
             active: true
         });
 
-        actorTypes[msg.sender] = ActorType.Student;
+        actorTypes[msg.sender] = DiplomeData.ActorType.Student;
 
         emit StudentRegistered(msg.sender, _idEtudiant, _nom);
     }
 
-    // -----------------------------------------------------
-    // 6) Gestion des Diplômes (NFT + struct interne)
-    // -----------------------------------------------------
+    // -------------------------------------------------------------------
+    // 5) Gestion des Diplômes (NFT + struct interne)
+    // -------------------------------------------------------------------
 
     /**
-     * @dev Permet à un établissement (EES) de minter un diplôme NFT 
-     *      et d'enregistrer les données de ce diplôme on-chain (struct Diploma).
-     * @param _studentWallet L'adresse de l'étudiant (doit être déjà enregistré, ou pas obligatoire)
-     * @param _idTitulaire ID de l'étudiant (hors-chain ou base interne)
-     * @param _idEES ID de l'établissement
-     * @param _nomEtablissement Nom de l'établissement
-     * @param _pays Pays du diplôme
-     * @param _typeDiplome Ex: "Licence", "Master", etc.
-     * @param _specialite Ex: "Informatique"
-     * @param _mention Ex: "Bien", "Très bien", ...
-     * @param _dateObtention Date d'obtention
-     * @param _tokenURI Le lien vers les métadonnées (IPFS) pour le NFT
+     * @dev Permet à un établissement de minter un diplôme NFT 
+     *      + enregistrer la data du diplôme.
      */
-    function mintDiplomaForStudent(
+    function mintDiplomeForStudent(
         address _studentWallet,
         uint256 _idTitulaire,
         uint256 _idEES,
@@ -361,17 +260,21 @@ contract DiplomePlatform is Ownable {
     )
         external
     {
-        // Vérifier que l'appelant est bien un établissement
-        require(actorTypes[msg.sender] == ActorType.Establishment, "Only establishment can mint");
-        require(establishmentSet.contains(msg.sender), "Establishment not authorized");
+        require(
+            actorTypes[msg.sender] == DiplomeData.ActorType.Establishment, 
+            "Only establishment can mint"
+        );
+        require(
+            establishmentSet.contains(msg.sender), 
+            "Establishment not authorized"
+        );
 
-        // On génère un nouvel ID de diplôme
-        uint256 currentDiplomaId = nextDiplomaId;
-        nextDiplomaId++;
+        uint256 currentDiplomeId = nextDiplomeId;
+        nextDiplomeId++;
 
-        // Enregistrer la structure de données du diplôme on-chain
-        diplomas[currentDiplomaId] = Diploma({
-            idDiplome: currentDiplomaId,
+        // Stockage on-chain de la struct
+        diplomas[currentDiplomeId] = DiplomeData.Diplome({
+            idDiplome: currentDiplomeId,
             idTitulaire: _idTitulaire,
             nomEtablissement: _nomEtablissement,
             idEES: _idEES,
@@ -383,87 +286,76 @@ contract DiplomePlatform is Ownable {
             exists: true
         });
 
-        // Mint le NFT correspondant
-        diplomeNFT.mintDiploma(_studentWallet, _tokenURI);
+        // Mint du NFT
+        diplomeNFT.mintDiplome(_studentWallet, _tokenURI);
 
-        emit DiplomaMinted(msg.sender, _studentWallet, currentDiplomaId);
+        emit DiplomeMinted(msg.sender, _studentWallet, currentDiplomeId);
     }
 
-    // -----------------------------------------------------
-    // 7) Évaluation du stagiaire
-    // -----------------------------------------------------
+    // -------------------------------------------------------------------
+    // 6) Évaluation du stagiaire
+    // -------------------------------------------------------------------
 
-    /**
-     * @dev Évaluation d'un étudiant par l'entreprise
-     *      L'entreprise reçoit 15 tokens en récompense
-     * @param _studentWallet L'adresse du student à évaluer
-     * @param _note La note ou l'appréciation (ex: 0-100)
-     */
     function evaluateStudent(address _studentWallet, uint256 _note) external {
-        require(actorTypes[msg.sender] == ActorType.Company, "Only a company can evaluate");
+        require(
+            actorTypes[msg.sender] == DiplomeData.ActorType.Company, 
+            "Only a company can evaluate"
+        );
         require(companies[msg.sender].active, "Company is not active");
-        require(actorTypes[_studentWallet] == ActorType.Student, "The target is not a student");
-        require(students[_studentWallet].active, "Student is not active");
+        require(
+            actorTypes[_studentWallet] == DiplomeData.ActorType.Student, 
+            "The target is not a student"
+        );
+        require(
+            students[_studentWallet].active, 
+            "Student is not active"
+        );
 
-        // Mettre à jour l'évaluation dans la struct Student
-        // On suppose qu'une seule évaluation ou on peut cumuler/faire la moyenne...
+        // Met à jour la note de l'étudiant
         students[_studentWallet].evaluation = _note;
 
-        // L'entreprise reçoit 15 tokens => via le token contract (depuis owner du token)
+        // Récompense l'entreprise (15 tokens)
         diplomeToken.rewardTokens(msg.sender, EVALUATION_REWARD);
 
         emit StudentEvaluated(msg.sender, _studentWallet, EVALUATION_REWARD);
     }
 
-    // -----------------------------------------------------
-    // 8) Vérification du diplôme
-    // -----------------------------------------------------
+    // -------------------------------------------------------------------
+    // 7) Vérification du diplôme
+    // -------------------------------------------------------------------
 
-    /**
-     * @dev Vérification de l'authenticité d'un diplôme
-     *      L'entreprise doit payer 10 tokens (approve préalable)
-     */
-    function verifyDiploma(uint256 _tokenId) external {
-        require(actorTypes[msg.sender] == ActorType.Company, "Only a company can verify");
+    function verifyDiplome(uint256 _tokenId) external {
+        require(
+            actorTypes[msg.sender] == DiplomeData.ActorType.Company, 
+            "Only a company can verify"
+        );
         require(companies[msg.sender].active, "Company is not active");
 
-        // L'entreprise doit avoir fait "approve" de 10 tokens avant d'appeler cette fonction
+        // Paiement en tokens (approve préalable)
         diplomeToken.transferFrom(msg.sender, address(this), VERIFICATION_FEES);
 
-        // Logique on-chain: vérifier que le NFT existe, etc.
-        address ownerOfDiploma = diplomeNFT.ownerOf(_tokenId);
+        // Vérifie la propriété
+        address ownerOfDiplome = diplomeNFT.ownerOf(_tokenId);
 
-        // Event => on sait qui a vérifié et qui est propriétaire du NFT
-        emit DiplomaVerified(msg.sender, ownerOfDiploma, VERIFICATION_FEES);
+        emit DiplomeVerified(msg.sender, ownerOfDiplome, VERIFICATION_FEES);
     }
 
-    // -----------------------------------------------------
-    // 9) Fonctions d'aide
-    // -----------------------------------------------------
+    // -------------------------------------------------------------------
+    // 8) Fonctions d'aide
+    // -------------------------------------------------------------------
 
-    /**
-     * @dev Récupération du solde de tokens du contrat 
-     *      (s'il en reçoit via la vérification, etc.)
-     */
     function getContractTokenBalance() external view returns (uint256) {
         return diplomeToken.balanceOf(address(this));
     }
 
-    /**
-     * @dev Retrait des tokens accumulés sur le contrat (par l'owner)
-     */
     function withdrawTokens(uint256 _amount) external onlyOwner {
         diplomeToken.transfer(msg.sender, _amount);
     }
 
-    // -----------------------------------------------------
-    // 10) (Optionnel) Récupération d'infos sur un diplôme
-    // -----------------------------------------------------
-
     /**
-     * @dev Retourne les infos d'un diplôme stocké on-chain
+     * @dev Retourne les infos d'un diplôme
      */
-    function getDiplomaInfo(uint256 _diplomaId) 
+    function getDiplomeInfo(uint256 _diplomeId) 
         external 
         view 
         returns (
@@ -479,8 +371,9 @@ contract DiplomePlatform is Ownable {
             bool exists
         ) 
     {
-        Diploma memory d = diplomas[_diplomaId];
-        require(d.exists, "Diploma does not exist");
+        DiplomeData.Diplome memory d = diplomas[_diplomeId];
+        require(d.exists, "Diplome does not exist");
+
         return (
             d.idDiplome,
             d.idTitulaire,

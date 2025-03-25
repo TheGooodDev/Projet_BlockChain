@@ -509,7 +509,7 @@
 						"type": "string"
 					}
 				],
-				"name": "mintDiploma",
+				"name": "mintDiplome",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -858,7 +858,7 @@
 				"isApprovedForAll(address,address)": {
 					"details": "See {IERC721-isApprovedForAll}."
 				},
-				"mintDiploma(address,string)": {
+				"mintDiplome(address,string)": {
 					"details": "Création (mint) d'un diplôme NFT",
 					"params": {
 						"recipient": ": l'adresse qui recevra le NFT (peut être l'adresse de l'étudiant)",
@@ -1084,10 +1084,11 @@
 			]
 		},
 		"contracts/DiplomeNFT.sol": {
-			"keccak256": "0xddcd574dd64291e18f1bdc5e97e4aef049aa39013aaf2a3ad599c4207fd22618",
+			"keccak256": "0x289b48bf508ca5ae31bda6b89d0e4e61f87dfd61a1d13560ebcd14783ceefdae",
+			"license": "MIT",
 			"urls": [
-				"bzz-raw://6ffa3cb04e680b6c76ddb88ec5b787fc8f80785f432f9f16a939892c29bc34bc",
-				"dweb:/ipfs/QmSAy1U8i1Lah89gzGtBVxb2DaEFSdPAmrMY1FrhmLsXWr"
+				"bzz-raw://0582d571684bf706711fa59a5765ec702183ea042f3025bc13c254b5b5f072bc",
+				"dweb:/ipfs/QmYpzHkvVWu31dxdrR9oiFhG36deDKv2JofKFnwDRqs6V4"
 			]
 		}
 	},

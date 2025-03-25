@@ -1,0 +1,47 @@
+{
+	"compiler": {
+		"version": "0.8.26+commit.8a97fa7a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [],
+		"devdoc": {
+			"details": "Librairie (ou simple définitions) contenant les structures et l'énumération d'acteurs",
+			"kind": "dev",
+			"methods": {},
+			"title": "DiplomeData",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/DiplomeData.sol": "DiplomeData"
+		},
+		"evmVersion": "cancun",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/DiplomeData.sol": {
+			"keccak256": "0x19693e8860be1ca6b39fc422ed8ecda5e8d9fef36d292409a651b893c771d5ce",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ba395e983cd0ad391fc5bd30356ff9c7e95813e0d3a5826bb22bfb1eadfb4a3f",
+				"dweb:/ipfs/QmQQkRXS9sh1o3SHqwg4rDtgwMm7c5u8kGTfAHZMLFijZd"
+			]
+		}
+	},
+	"version": 1
+}
