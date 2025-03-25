@@ -51,12 +51,6 @@
 						"internalType": "address",
 						"name": "company",
 						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
 					}
 				],
 				"name": "CompanyRegistered",
@@ -70,18 +64,6 @@
 						"internalType": "address",
 						"name": "company",
 						"type": "address"
-					},
-					{
-						"indexed": true,
-						"internalType": "address",
-						"name": "student",
-						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "uint256",
-						"name": "feesPaid",
-						"type": "uint256"
 					}
 				],
 				"name": "DiplomaVerified",
@@ -92,15 +74,22 @@
 				"inputs": [
 					{
 						"indexed": true,
+						"internalType": "uint256",
+						"name": "idDiplome",
+						"type": "uint256"
+					}
+				],
+				"name": "DiplomeRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
 						"internalType": "address",
 						"name": "establishment",
 						"type": "address"
-					},
-					{
-						"indexed": false,
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
 					}
 				],
 				"name": "EstablishmentRegistered",
@@ -136,18 +125,31 @@
 					},
 					{
 						"indexed": true,
-						"internalType": "address",
-						"name": "student",
-						"type": "address"
+						"internalType": "uint256",
+						"name": "studentId",
+						"type": "uint256"
 					},
 					{
 						"indexed": false,
-						"internalType": "uint256",
-						"name": "reward",
-						"type": "uint256"
+						"internalType": "string",
+						"name": "note",
+						"type": "string"
 					}
 				],
 				"name": "StudentEvaluated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "idEtudiant",
+						"type": "uint256"
+					}
+				],
+				"name": "StudentRegistered",
 				"type": "event"
 			},
 			{
@@ -179,130 +181,19 @@
 			{
 				"inputs": [
 					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "actorTypes",
-				"outputs": [
-					{
-						"internalType": "enum DiplomePlatform.ActorType",
-						"name": "",
-						"type": "uint8"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "companies",
-				"outputs": [
-					{
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
+						"internalType": "uint256",
+						"name": "_idEtudiant",
+						"type": "uint256"
 					},
 					{
 						"internalType": "string",
-						"name": "sector",
+						"name": "_note",
 						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "active",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "diplomeNFT",
-				"outputs": [
-					{
-						"internalType": "contract DiplomeNFT",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "diplomeToken",
-				"outputs": [
-					{
-						"internalType": "contract DiplomeToken",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "",
-						"type": "address"
-					}
-				],
-				"name": "establishments",
-				"outputs": [
-					{
-						"internalType": "string",
-						"name": "name",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "country",
-						"type": "string"
-					},
-					{
-						"internalType": "bool",
-						"name": "active",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_studentWallet",
-						"type": "address"
 					}
 				],
 				"name": "evaluateStudent",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "getContractTokenBalance",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -339,14 +230,61 @@
 			{
 				"inputs": [
 					{
-						"internalType": "string",
-						"name": "_name",
-						"type": "string"
-					},
-					{
-						"internalType": "string",
-						"name": "_sector",
-						"type": "string"
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "ID_Entreprise",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "Nom",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Secteur",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Date_Creation",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Classification_Taille",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Pays",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Adresse",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Courriel",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Telephone",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Site_Web",
+								"type": "string"
+							}
+						],
+						"internalType": "struct DiplomeData.Entreprise",
+						"name": "_entreprise",
+						"type": "tuple"
 					}
 				],
 				"name": "registerCompany",
@@ -357,17 +295,209 @@
 			{
 				"inputs": [
 					{
-						"internalType": "string",
-						"name": "_name",
-						"type": "string"
-					},
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "ID_Diplome",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "ID_Titulaire",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "Nom_Etablissement",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "ID_EES",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "Pays",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Type_Diplome",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Specialite",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Mention",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Date_dobtention",
+								"type": "string"
+							}
+						],
+						"internalType": "struct DiplomeData.Diplome",
+						"name": "_diplome",
+						"type": "tuple"
+					}
+				],
+				"name": "registerDiplome",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
 					{
-						"internalType": "string",
-						"name": "_country",
-						"type": "string"
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "ID_ELS",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "Nom_Etablissement",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Type",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Pays",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Adresse",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Site_Web",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "ID_Agent",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct DiplomeData.EtablissementEnseignementSuperieur",
+						"name": "_etab",
+						"type": "tuple"
 					}
 				],
 				"name": "registerEstablishment",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "ID_Etudiant",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "Nom",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Prenom",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Date_de_naissance",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Sexe",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Nationalite",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Statut_civil",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Adresse",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Courriel",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Telephone",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Section",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Sujet_PFE",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Entreprise_Stage_PFE",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "NometPrenom_MaitreDuStage",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Date_debut_stage",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Date_fin_stage",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "Evaluation",
+								"type": "string"
+							}
+						],
+						"internalType": "struct DiplomeData.Etudiant",
+						"name": "_student",
+						"type": "tuple"
+					}
+				],
+				"name": "registerStudent",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -420,7 +550,7 @@
 			}
 		],
 		"devdoc": {
-			"details": "Contrat principal pour gérer la logique de l'application",
+			"details": "Contrat principal qui gère les enregistrements et interactions       (Etablissements, Entreprises, Etudiants, Diplômes), ainsi que       l'émission et la vérification d'un NFT \"Diplome\", et la gestion       de tokens ERC20 pour la rémunération et les frais.",
 			"errors": {
 				"OwnableInvalidOwner(address)": [
 					{
@@ -435,27 +565,53 @@
 			},
 			"kind": "dev",
 			"methods": {
-				"evaluateStudent(address)": {
-					"details": "Évaluation d'un étudiant par l'entreprise L'entreprise reçoit 15 tokens en récompense"
+				"constructor": {
+					"details": "Constructeur. Initialise l'owner par défaut via Ownable().      Définit les références vers DiplomeToken (ERC20) et DiplomeNFT (ERC721).",
+					"params": {
+						"_nftAddress": "Adresse du contrat DiplomeNFT déployé",
+						"_tokenAddress": "Adresse du contrat DiplomeToken déployé"
+					}
 				},
-				"getContractTokenBalance()": {
-					"details": "Récupération du solde de tokens du contrat (s'il en reçoit via la vérification, etc.)"
+				"evaluateStudent(uint256,string)": {
+					"details": "Permet à une entreprise d'évaluer un étudiant.      - On précise l'ID de l'étudiant à évaluer.      - On stocke la note (ou commentaire) dans etudiants[_idEtudiant].Evaluation.      - L'entreprise reçoit EVALUATION_REWARD tokens en récompense. Émet l'événement StudentEvaluated, contenant l'adresse de l'entreprise, l'ID de l'étudiant et la note donnée.",
+					"params": {
+						"_idEtudiant": "L'identifiant de l'étudiant (tel que défini lors du registerStudent)",
+						"_note": "La note ou le commentaire attribué par l'entreprise (string)"
+					}
 				},
 				"mintDiplomaForStudent(address,string)": {
-					"details": "Permet à un établissement (EES) de minter un diplôme NFT ",
+					"details": "Permet à un établissement (autorisé) de minter un NFT représentant un Diplôme.",
 					"params": {
-						"_studentWallet": "L'adresse de l'étudiant",
-						"_tokenURI": "Le lien vers les métadonnées (IPFS)"
+						"_studentWallet": "Adresse du wallet de l'étudiant (destinataire du NFT).",
+						"_tokenURI": "URI contenant les métadonnées du diplôme (ex: IPFS). Seuls les Établissements (ActorType.Establishment) autorisés dans establishmentSet peuvent exécuter cette fonction."
 					}
 				},
 				"owner()": {
 					"details": "Returns the address of the current owner."
 				},
-				"registerCompany(string,string)": {
-					"details": "Enregistre une entreprise"
+				"registerCompany((uint256,string,string,string,string,string,string,string,string,string))": {
+					"details": "Enregistre une entreprise. L'appelant (msg.sender) devient 'Company'.",
+					"params": {
+						"_entreprise": "Struct DiplomeData.Entreprise avec                    toutes les informations de l'entreprise. - Stocke les données dans entrepriseData[msg.sender]. - Émet un événement CompanyRegistered."
+					}
 				},
-				"registerEstablishment(string,string)": {
-					"details": "Enregistre un établissement d'enseignement"
+				"registerDiplome((uint256,uint256,string,uint256,string,string,string,string,string))": {
+					"details": "Enregistre un nouveau diplôme dans la variable 'diplomes',       pour un suivi on-chain supplémentaire (indépendamment du NFT).",
+					"params": {
+						"_diplome": "Struct DiplomeData.Diplome contenant toutes les infos du diplôme. - Vérifie que ce diplomaId n'existe pas déjà dans le mapping. - Émet un événement DiplomeRegistered."
+					}
+				},
+				"registerEstablishment((uint256,string,string,string,string,string,uint256))": {
+					"details": "Enregistre un établissement d'enseignement supérieur (EES).      L'appelant (msg.sender) devient 'Establishment' s'il ne l'était pas déjà.",
+					"params": {
+						"_etab": "Struct DiplomeData.EtablissementEnseignementSuperieur avec              toutes les informations de l'établissement. - Stocke les données dans eesData[msg.sender]. - Ajoute l'adresse dans establishmentSet pour l'autoriser à minter des diplômes. - Émet un événement EstablishmentRegistered."
+					}
+				},
+				"registerStudent((uint256,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string,string))": {
+					"details": "Enregistre un nouvel étudiant. Les informations sont passées sous forme de struct.",
+					"params": {
+						"_student": "Struct DiplomeData.Etudiant contenant toutes les infos de l'étudiant. - Vérifie que l'ID_Etudiant n'est pas déjà enregistré. - Stocke dans etudiants[_student.ID_Etudiant]. - Émet un événement StudentRegistered."
+					}
 				},
 				"renounceOwnership()": {
 					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
@@ -464,10 +620,16 @@
 					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
 				},
 				"verifyDiploma(uint256)": {
-					"details": "Vérification de l'authenticité d'un diplôme L'entreprise doit payer 10 tokens"
+					"details": "Vérifie l'authenticité d'un diplôme (NFT).       En contrepartie, l'entreprise paie VERIFICATION_FEES tokens.",
+					"params": {
+						"_tokenId": "ID du NFT (diplôme) à vérifier. L'entreprise doit au préalable faire \"approve\" de VERIFICATION_FEES  sur DiplomeToken pour ce contrat. Ensuite, on prélève les tokens. La fonction ownerOf(_tokenId) dans DiplomeNFT assure que le NFT existe. Émet un événement DiplomaVerified."
+					}
 				},
 				"withdrawTokens(uint256)": {
-					"details": "Retrait des tokens accumulés sur le contrat (par l'owner)"
+					"details": "Permet au propriétaire (owner) du contrat de retirer une quantité       de tokens (DPT) stockés dans ce contrat.",
+					"params": {
+						"_amount": "Quantité de tokens à retirer."
+					}
 				}
 			},
 			"title": "DiplomePlatform",
@@ -767,25 +929,36 @@
 				"dweb:/ipfs/QmSTeGorKzSWF6HAmxo32uCZiEuKNvreQdUiX1AaYtUMTz"
 			]
 		},
-		"contracts/DiplomeNFT.sol": {
-			"keccak256": "0xddcd574dd64291e18f1bdc5e97e4aef049aa39013aaf2a3ad599c4207fd22618",
+		"contracts/DiplomeData.sol": {
+			"keccak256": "0x7f2b511759b9d3b111511eefb2404eea9dddad3f0828a1ea6b400503a8ad7c1e",
+			"license": "MIT",
 			"urls": [
-				"bzz-raw://6ffa3cb04e680b6c76ddb88ec5b787fc8f80785f432f9f16a939892c29bc34bc",
-				"dweb:/ipfs/QmSAy1U8i1Lah89gzGtBVxb2DaEFSdPAmrMY1FrhmLsXWr"
+				"bzz-raw://76350fbc579a86e58a054135624d7c1b47876371385b17e0e07bdb6d221f6fc4",
+				"dweb:/ipfs/Qmf1X56Jtknk48Xikkdrab5qd3RkVKHjHk99fNT3dzBKCC"
+			]
+		},
+		"contracts/DiplomeNFT.sol": {
+			"keccak256": "0x289b48bf508ca5ae31bda6b89d0e4e61f87dfd61a1d13560ebcd14783ceefdae",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0582d571684bf706711fa59a5765ec702183ea042f3025bc13c254b5b5f072bc",
+				"dweb:/ipfs/QmYpzHkvVWu31dxdrR9oiFhG36deDKv2JofKFnwDRqs6V4"
 			]
 		},
 		"contracts/DiplomePlatform.sol": {
-			"keccak256": "0x92e0468569b08f086b968e48a942865abf993681cff6f9a133f1937a0f88ba90",
+			"keccak256": "0x4e7cb916a69ad2b2f2d2e635b695460ba865728dbd767b5dc1431b587cba56ca",
+			"license": "MIT",
 			"urls": [
-				"bzz-raw://bba8722f7000b4f8d2b21c7c1a6e326b5daa152d0fccedd96fc62b55b528304a",
-				"dweb:/ipfs/QmU8ofqFWtT3sRZRzS8msxgiuSvW389eWgVMMMWnMQyvRk"
+				"bzz-raw://d5ab8151ed8bceb282bfef3a3871def5d3075533246cc92998f5c164dd27f097",
+				"dweb:/ipfs/Qmd8ZDqFvs6WHBnzfb55NU2u3ddgmrhoRatsT8yuB6BNPa"
 			]
 		},
 		"contracts/DiplomeToken.sol": {
-			"keccak256": "0xe1f7afcc96d843d852da0f30e5e8529888951cb34f4576e9005461dfd1614831",
+			"keccak256": "0x78cfad91a4d63f83b509bfd3f3ee391f72a91fd89160d22bbd48968c9a9eca54",
+			"license": "MIT",
 			"urls": [
-				"bzz-raw://c5bd3555886c2984ab4579eafa35145f77d5fa2c16b5b81286d267a62270ed61",
-				"dweb:/ipfs/QmNtXgyjiN8qbxhfNzu7oH8oSckvL7pkAdz7ScbQ3BnqjG"
+				"bzz-raw://3bb7b3415e5bba775d9f3fbae50e687f9c34bce9f41f88801311a3ff7d8abce6",
+				"dweb:/ipfs/QmWBUUo2V7QiQdXQ4gHBFxVpE9HLesrSj49wp46AGPTJPZ"
 			]
 		}
 	},
