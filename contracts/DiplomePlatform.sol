@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.17;
+pragma solidity ^0.8.20;
+
 
 import "./DiplomeToken.sol";
 import "./DiplomeNFT.sol";
@@ -70,6 +71,7 @@ contract DiplomePlatform is Ownable {
     constructor(address _tokenAddress, address _nftAddress) Ownable(msg.sender) {
         diplomeToken = DiplomeToken(_tokenAddress);
         diplomeNFT = DiplomeNFT(_nftAddress);
+        
     }
 
     // --------------------------------------------------------------------------
